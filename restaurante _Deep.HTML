@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurantes en Estelí</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            text-align: center;
+            color: white;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .formulario {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        select, button {
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+            width: 250px;
+        }
+        .error {
+            color: red;
+            font-size: 14px;
+            display: none;
+            text-decoration: underline;
+        }
+        .restaurant-list {
+            margin-top: 20px;
+        }
+        .restaurant {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            margin: 10px;
+            display: inline-block;
+            width: 300px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .restaurant:hover {
+            transform: scale(1.05);
+        }
+        img {
+            width: 100%;
+            border-radius: 10px;
+        }
+        .no-result {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bienvenido a la guía de restaurantes en Estelí</h1>
+        <p>Selecciona una opción para ver recomendaciones:</p>
+        <div class="formulario">
+            <select id="ocasion">
+                <option value="">Seleccionar ocasión...</option>
+                <option value="familiar">Familiar</option>
+                <option value="esposa">Esposa</option>
+                <option value="amigos">Amigos</option>
+                <option value="negocios">Negocios</option>
+            </select>
+            <select id="presupuesto">
+                <option value="">Seleccionar presupuesto...</option>
+                <option value="bajo">Bajo (C$100 - C$300)</option>
+                <option value="medio">Medio (C$300 - C$800)</option>
+                <option value="alto">Alto (C$800+)</option>
+            </select>
+            <select id="tipo_comida">
+                <option value="">Seleccionar tipo de comida...</option>
+                <option value="tipica">Comida Típica</option>
+                <option value="asados">Asados</option>
+                <option value="italiana">Italiana</option>
+                <option value="mariscos">Mariscos</option>
+                <option value="mexicana">Mexicana</option>
+                <option value="china">China</option>
+                <option value="vegetariana">Vegetariana</option>
+                <option value="rapida">Comida Rápida</option>
+            </select>
+            <button onclick="generarRecomendacion()">Buscar</button>
+            <p id="errorMensaje" class="error">Debe seleccionar todas las opciones.</p>
+        </div>
+
+        <div id="recomendaciones" class="restaurant-list"></div>
+        <div id="noResult" class="no-result"></div>
+    </div>
+
+    <script>
+        let restaurantes = [
+            { nombre: "Restaurant Vuela Vuela", ocasion: "familiar", presupuesto: "bajo", tipo_comida: "tipica", imagen: "vuela_vuela.jpg" },
+            { nombre: "Casa Vecchia", ocasion: "esposa", presupuesto: "medio", tipo_comida: "italiana", imagen: "casa_vecchia.jpg" },
+            { nombre: "Green House Restaurant", ocasion: "negocios", presupuesto: "alto", tipo_comida: "vegetariana", imagen: "green_house.jpg" },
+            { nombre: "Teriyaki Express", ocasion: "negocios", presupuesto: "alto", tipo_comida: "china", imagen: "teriyaki_express.jpg" },
+            { nombre: "El Gallito Restaurante", ocasion: "familiar", presupuesto: "bajo", tipo_comida: "tipica", imagen: "el_gallito.jpg" },
+            { nombre: "Restaurante Monte Carlo", ocasion: "negocios", presupuesto: "alto", tipo_comida: "internacional", imagen: "monte_carlo.jpg" },
+            { nombre: "Restaurante Casa Rivas", ocasion: "familiar", presupuesto: "medio", tipo_comida: "tipica", imagen: "casa_rivas.jpg" },
+            { nombre: "Taco Loco", ocasion: "amigos", presupuesto: "bajo", tipo_comida: "mexicana", imagen: "taco_loco.jpg" },
+            { nombre: "Cafe Luz Y Luna", ocasion: "amigos", presupuesto: "bajo", tipo_comida: "tipica", imagen: "cafe_luz_y_luna.jpg" },
+            { nombre: "McDonald's Estelí", ocasion: "familiar", presupuesto: "medio", tipo_comida: "rapida", imagen: "mcdonalds.jpg" },
+            { nombre: "El Rinconcito del Sabor", ocasion: "negocios", presupuesto: "medio", tipo_comida: "mariscos", imagen: "rinconcito_del_sabor.jpg" },
+            { nombre: "Bar y Restaurante La Casita", ocasion: "familiar", presupuesto: "alto", tipo_comida: "asados", imagen: "la_casita.jpg" },
+            { nombre: "Restaurante El Pollo Caliente", ocasion: "amigos", presupuesto: "bajo", tipo_comida: "rapida", imagen: "el_pollo_caliente.jpg" }
+        ];
+
+        function generarRecomendacion() {
+            let ocasion = document.getElementById("ocasion").value;
+            let presupuesto = document.getElementById("presupuesto").value;
+            let tipo_comida = document.getElementById("tipo_comida").value;
+            let listaRecomendaciones = document.getElementById("recomendaciones");
+            let noResult = document.getElementById("noResult");
+            let errorMensaje = document.getElementById("errorMensaje");
+            listaRecomendaciones.innerHTML = "";
+
+            if (!ocasion || !presupuesto || !tipo_comida) {
+                errorMensaje.style.display = "block";
+                return;
+            } else {
+                errorMensaje.style.display = "none";
+            }
+
+            let restaurantesFiltrados = restaurantes.filter(r => r.ocasion === ocasion && r.presupuesto === presupuesto && r.tipo_comida === tipo_comida);
+
+            if (restaurantesFiltrados.length > 0) {
+                noResult.style.display = "none";
+                restaurantesFiltrados.forEach(r => {
+                    let div = document.createElement("div");
+                    div.classList.add("restaurant");
+                    div.innerHTML = `
+                        <img src="${r.imagen}" alt="${r.nombre}">
+                        <h3>${r.nombre}</h3>
+                    `;
+                    listaRecomendaciones.appendChild(div);
+                });
+            } else {
+                noResult.style.display = "block";
+                noResult.innerHTML = "No hay coincidencias exactas. Prueba con otras opciones.";
+            }
+        }
+    </script>
+</body>
+</html>
